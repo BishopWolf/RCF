@@ -1,6 +1,5 @@
 /*
- * Copyright 2017 IAEA
- * Contract number TAL-NAHU20160831-001
+ * Copyright 2017 CENTIS
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
