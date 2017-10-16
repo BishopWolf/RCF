@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <parent>
+        <groupId>org.scijava</groupId>
+        <artifactId>pom-scijava</artifactId>
+        <version>LATEST</version>
+        <relativePath />
+    </parent>
+    
+    <groupId>cu.centis</groupId>
+    <artifactId>Robust_Curve_Fitting</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    
+    <name>plugins/RCF.jar</name>
+    <description>A Maven project implementing Robust Curve Fitting utilities</description>
+    
+    <url>http://www.centis.edu.cu/</url>
+    <inceptionYear>2017</inceptionYear>
+    <organization>
+        <name>CENTIS</name>
+        <url>http://www.centis.edu.cu/</url>
+    </organization>
+    <licenses>
+        <license>
+            <name>Apache License v2+</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    
+    <developers>
+        <developer>
+            <id>avg</id>
+            <name>Alex Vergara Gil</name>
+            <email>alexvergaragil@gmail.com</email>
+            <url>https://gitlab.com/BishopWolf/</url>
+            <organization>CENTIS</organization>
+            <organizationUrl>http://www.centis.edu.cu/</organizationUrl>
+            <roles>
+                <role>lead</role>
+                <role>developer</role>
+                <role>debugger</role>
+                <role>reviewer</role>
+                <role>support</role>
+                <role>maintainer</role>
+            </roles>
+            <timezone>-5</timezone>
+        </developer>
+    </developers>
+    <contributors>
+        <contributor>
+            <name>No one yet</name>
+        </contributor>
+    </contributors>
+    
+    <mailingLists>
+        <mailingList>
+            <name>ImageJ Forum</name>
+            <archive>http://forum.imagej.net/</archive>
+        </mailingList>
+    </mailingLists>
+
+    <scm>
+        <connection>scm:git:git://github.com/BishopWolf/RCF.git</connection>
+        <developerConnection>scm:git:git@github.com:BishopWolf/RCF.git</developerConnection>
+        <tag>HEAD</tag>
+        <url>https://github.com/BishopWolf/RCF</url>
+    </scm>
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/BishopWolf/RCF/issues</url>
+    </issueManagement>
+    <ciManagement>
+        <system>GitHub</system>
+        <url>https://github.com/BishopWolf/RCF/builds/artifacts/master/download?job=RCF-build</url>
+    </ciManagement>
+    
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <main-class>RCF</main-class>
+        <license.licenseName>Apache License v2+</license.licenseName>
+        <license.copyrightOwners>CENTIS</license.copyrightOwners>
+    </properties>
+    
+    <repositories>
+        <!-- NB: for project parent -->
+        <repository>
+            <id>imagej.public</id>
+            <url>https://maven.imagej.net/content/groups/public</url>
+        </repository>
+    </repositories>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>${main-class}</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-site-plugin</artifactId>
+                <configuration>
+                    <skipDeploy>true</skipDeploy>
+                </configuration>
+            </plugin>
+            <!-- Do not generate a source jar -->
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <configuration>
+                    <skipSource>true</skipSource>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    
+    <dependencies>
+        <dependency>
+            <groupId>net.imagej</groupId>
+            <artifactId>ij</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>sc.fiji</groupId>
+            <artifactId>Fiji_Plugins</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.imagej</groupId>
+            <artifactId>imagej-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.imglib2</groupId>
+            <artifactId>imglib2</artifactId>
+        </dependency>
+    </dependencies>
+    
+</project>
