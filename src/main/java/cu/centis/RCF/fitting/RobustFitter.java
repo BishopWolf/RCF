@@ -205,8 +205,7 @@ public class RobustFitter {
             plot.show();
         }
 
-        public void initializeIRLS() {
-            fit();
+        private void SimpleWeighting() {
             double[] Rx = getResiduals();
             for (int i = 0; i < Rx.length; i++) {
                 Rx[i] = Math.abs(Rx[i]);
@@ -215,7 +214,12 @@ public class RobustFitter {
             for (int i = 0; i < Rx.length; i++) {
                 xweights[i] = 1 - xweights[i];
             }
-            this.weights = xweights.clone();
+            this.weights = xweights;
+        }
+
+        public void initializeIRLS() {
+            fit();
+            SimpleWeighting();
         }
 
         public void runIRLS(int iterations) {
@@ -225,15 +229,7 @@ public class RobustFitter {
                 if (getRSquared() > 0.9) {
                     break;
                 }
-                double[] Rx = getResiduals();
-                for (int i = 0; i < Rx.length; i++) {
-                    Rx[i] = Math.abs(Rx[i]);
-                }
-                double[] xweights = MathUtils.Normalize(Rx);
-                for (int i = 0; i < Rx.length; i++) {
-                    xweights[i] = 1 - xweights[i];
-                }
-                setWeights(xweights);
+                SimpleWeighting();
                 ++iter;
             }
         }
