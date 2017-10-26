@@ -205,31 +205,29 @@ public class RobustFitter {
             plot.show();
         }
 
-        private void SimpleWeighting() {
-            double[] Rx = getResiduals();
-            for (int i = 0; i < Rx.length; i++) {
-                Rx[i] = Math.abs(Rx[i]);
+        private void IRLSWeighting(int p) {
+            double[] xweights = getResiduals();
+            for (int i = 0; i < xweights.length; i++) {
+                double w = Math.max(0.0001, Math.abs(xweights[i]));
+                xweights[i] = p == 1 ? 1 / w : Math.pow(w, p - 2);
             }
-            double[] xweights = MathUtils.Normalize(Rx);
-            for (int i = 0; i < Rx.length; i++) {
-                xweights[i] = 1 - xweights[i];
-            }
+            xweights = MathUtils.Normalize(xweights);
             this.weights = xweights;
         }
 
         public void initializeIRLS() {
             fit();
-            SimpleWeighting();
+            this.weights = new double[this.xData.length];
+            for (int i = 0; i < this.weights.length; i++) {
+                this.weights[i] = 1;
+            }
         }
 
-        public void runIRLS(int iterations) {
+        public void runIRLS(int iterations, int p) {
             int iter = 0;
             while (iter < iterations) {
                 fit(params);
-                if (getRSquared() > 0.9) {
-                    break;
-                }
-                SimpleWeighting();
+                IRLSWeighting(p);
                 ++iter;
             }
         }
