@@ -15,9 +15,10 @@
  */
 package cu.centis.RCF.fitting;
 
-import java.util.Objects;
 import org.apache.commons.math3.exception.NoDataException;
 import cu.centis.RCF.MathUtils;
+import static cu.centis.RCF.fitting.RobustFitter.FWHM;
+import static cu.centis.RCF.fitting.RobustFitter.FWTM;
 
 /**
  *
@@ -67,26 +68,22 @@ public class GaussianFit {
 
     public static class GaussianFitter extends RobustFitter.MyAbstractCurveFitter {
 
-        private GaussianFitter(double[] xpoints, double[] ypoints, double[] weights) {
+        private GaussianFitter(double[] xpoints, double[] ypoints) {
             this.xData = xpoints.clone();
             this.yData = ypoints.clone();
-            if (Objects.isNull(weights)) {
-                this.weights = new double[yData.length];
-                for (int i = 0; i < yData.length; i++) {
-                    this.weights[i] = 1;
-                }
-            } else {
-                this.weights = weights.clone();
+            this.weights = new double[yData.length];
+            for (int i = 0; i < yData.length; i++) {
+                this.weights[i] = 1;
             }
             this.function = new FGauss();
         }
 
-        public static GaussianFitter create(double[] xpoints, double[] ypoints, double[] weights) {
-            return new GaussianFitter(xpoints, ypoints, weights);
+        public static GaussianFitter create(double[] xpoints, double[] ypoints) {
+            return new GaussianFitter(xpoints, ypoints);
         }
 
         @Override
-        public void fit() {
+        public synchronized void fit() {
             // Using default initialization
             double[] initialGuess = new double[]{0.0, MathUtils.Max(yData), MathUtils.Mean(xData), 1.0};
             fit(initialGuess);
@@ -95,6 +92,10 @@ public class GaussianFit {
         @Override
         public String getName() {
             return "Gaussian Fit";
+        }
+
+        public synchronized double[] getResolution() {
+            return new double[]{params[3] * FWHM, params[3] * FWTM}; 
         }
 
     }

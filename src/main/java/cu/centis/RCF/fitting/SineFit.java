@@ -15,7 +15,6 @@
  */
 package cu.centis.RCF.fitting;
 
-import java.util.Objects;
 import org.apache.commons.math3.exception.NoDataException;
 import cu.centis.RCF.MathUtils;
 
@@ -57,26 +56,22 @@ public class SineFit {
 
     public static class SineFitter extends RobustFitter.MyAbstractCurveFitter {
 
-        private SineFitter(double[] xpoints, double[] ypoints, double[] weights) {
+        private SineFitter(double[] xpoints, double[] ypoints) {
             this.xData = xpoints.clone();
             this.yData = ypoints.clone();
-            if (Objects.isNull(weights)) {
-                this.weights = new double[yData.length];
-                for (int i = 0; i < yData.length; i++) {
-                    this.weights[i] = 1;
-                }
-            } else {
-                this.weights = weights.clone();
+            this.weights = new double[yData.length];
+            for (int i = 0; i < yData.length; i++) {
+                this.weights[i] = 1;
             }
             this.function = new FSine();
         }
 
-        public static SineFitter create(double[] xpoints, double[] ypoints, double[] weights) {
-            return new SineFitter(xpoints, ypoints, weights);
+        public static SineFitter create(double[] xpoints, double[] ypoints) {
+            return new SineFitter(xpoints, ypoints);
         }
 
         @Override
-        public void fit() {
+        public synchronized void fit() {
             // Using default initialization
             double[] initialGuess = new double[]{
                 yData[0],

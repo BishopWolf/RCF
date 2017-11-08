@@ -15,7 +15,6 @@
  */
 package cu.centis.RCF.fitting;
 
-import java.util.Objects;
 import org.apache.commons.math3.exception.NoDataException;
 
 /**
@@ -84,27 +83,23 @@ public class PolinomialFit {
 
     public static class PolinomialFitter extends RobustFitter.MyAbstractCurveFitter {
 
-        private PolinomialFitter(int order, double[] xpoints, double[] ypoints, double[] weights) {
+        private PolinomialFitter(int order, double[] xpoints, double[] ypoints) {
             this.xData = xpoints.clone();
             this.yData = ypoints.clone();
-            if (Objects.isNull(weights)) {
                 this.weights = new double[yData.length];
                 for (int i = 0; i < yData.length; i++) {
                     this.weights[i] = 1;
                 }
-            } else {
-                this.weights = weights.clone();
-            }
             this.function = new FPolinomial();
             ((FPolinomial) (this.function)).setOrder(order);
         }
 
-        public static PolinomialFitter create(int order, double[] xpoints, double[] ypoints, double[] weights) {
-            return new PolinomialFitter(order, xpoints, ypoints, weights);
+        public static PolinomialFitter create(int order, double[] xpoints, double[] ypoints) {
+            return new PolinomialFitter(order, xpoints, ypoints);
         }
 
         @Override
-        public void fit() {
+        public synchronized void fit() {
             // Using default initialization
             int order = ((FPolinomial) function).getOrder();
             double[] initialGuess = new double[order + 1];

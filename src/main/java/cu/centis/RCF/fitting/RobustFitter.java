@@ -29,12 +29,16 @@ import org.apache.commons.math3.fitting.leastsquares.LeastSquaresBuilder;
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresProblem;
 import org.apache.commons.math3.linear.DiagonalMatrix;
 import cu.centis.RCF.MathUtils;
+import java.util.Objects;
 
 /**
  *
  * @author alex.vergara
  */
 public class RobustFitter {
+
+    public static final double FWHM = 2 * Math.sqrt(2 * Math.log(2));
+    public static final double FWTM = 2 * Math.sqrt(2 * Math.log(10));
 
     public static abstract class MyParametricUnivariateFunction implements ParametricUnivariateFunction {
 
@@ -47,7 +51,7 @@ public class RobustFitter {
         protected double[] params;
         protected double[] xData, yData, weights;
 
-        public void fit(double[] initialGuess) {
+        public synchronized void fit(double[] initialGuess) {
             this.params = initialGuess.clone();
             WeightedObservedPoints points = new WeightedObservedPoints();
             for (int i = 0; i < xData.length; i++) {
@@ -58,11 +62,11 @@ public class RobustFitter {
 
         public abstract void fit();
 
-        public void setWeights(double[] lweights) {
+        public synchronized void setWeights(double[] lweights) {
             this.weights = lweights.clone();
         }
 
-        public double f(double x) {
+        public synchronized double f(double x) {
             return function.value(x, params);
         }
 
@@ -72,7 +76,7 @@ public class RobustFitter {
 
         public abstract String getName();
 
-        public double[] getParams() {
+        public synchronized double[] getParams() {
             return params;
         }
 
@@ -80,11 +84,11 @@ public class RobustFitter {
             return params.length;
         }
 
-        public double[] getXPoints() {
+        public synchronized double[] getXPoints() {
             return xData;
         }
 
-        public double[] getYPoints() {
+        public synchronized double[] getYPoints() {
             return yData;
         }
 
@@ -205,29 +209,31 @@ public class RobustFitter {
             plot.show();
         }
 
-        private void IRLSWeighting(int p) {
-            double[] xweights = getResiduals();
-            for (int i = 0; i < xweights.length; i++) {
-                double w = Math.max(0.0001, Math.abs(xweights[i]));
-                xweights[i] = p == 1 ? 1 / w : Math.pow(w, p - 2);
-            }
-            xweights = MathUtils.Normalize(xweights);
-            this.weights = xweights;
-        }
-
         public void initializeIRLS() {
-            fit();
             this.weights = new double[this.xData.length];
             for (int i = 0; i < this.weights.length; i++) {
                 this.weights[i] = 1;
             }
+            fit();
         }
 
-        public void runIRLS(int iterations, int p) {
+        public void runIRLS(int iterations) {
             int iter = 0;
+            if (Objects.isNull(params)){
+                fit();
+            }
             while (iter < iterations) {
                 fit(params);
-                IRLSWeighting(p);
+                if (getRSquared() > 0.9) {
+                    break;
+                }
+                double[] Rx = getResiduals();
+                double[] xweights = new double[Rx.length];
+                for (int i = 0; i < Rx.length; i++) {
+                    xweights[i] = 1 / Math.max(0.0001, Math.abs(Rx[i]));
+                }
+                xweights = MathUtils.Normalize(xweights);
+                setWeights(xweights);
                 ++iter;
             }
         }

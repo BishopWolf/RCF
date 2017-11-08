@@ -15,7 +15,6 @@
  */
 package cu.centis.RCF.fitting;
 
-import java.util.Objects;
 import org.apache.commons.math3.exception.NoDataException;
 
 /**
@@ -50,26 +49,22 @@ public class MeanFit {
 
     public static class MeanFitter extends RobustFitter.MyAbstractCurveFitter {
 
-        private MeanFitter(double[] xpoints, double[] ypoints, double[] weights) {
+        private MeanFitter(double[] xpoints, double[] ypoints) {
             this.xData = xpoints.clone();
             this.yData = ypoints.clone();
-            if (Objects.isNull(weights)) {
-                this.weights = new double[yData.length];
-                for (int i = 0; i < yData.length; i++) {
-                    this.weights[i] = 1;
-                }
-            } else {
-                this.weights = weights.clone();
+            this.weights = new double[yData.length];
+            for (int i = 0; i < yData.length; i++) {
+                this.weights[i] = 1;
             }
             this.function = new FMean();
         }
 
-        public static MeanFitter create(double[] xpoints, double[] ypoints, double[] weights) {
-            return new MeanFitter(xpoints, ypoints, weights);
+        public static MeanFitter create(double[] xpoints, double[] ypoints) {
+            return new MeanFitter(xpoints, ypoints);
         }
 
         @Override
-        public void fit() {
+        public synchronized void fit() {
             // Using default initialization
             double[] initialGuess = new double[]{0.0};
             fit(initialGuess);
